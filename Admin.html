@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#0B3D2E">
+  <?!= include('Styles'); ?>
+  <style>
+    body { background: #F5F2EA; }
+    .adm-top {
+      position: relative; color: #fff; overflow: hidden;
+      background: radial-gradient(90% 120% at 100% 0%, rgba(22, 165, 123, .35), transparent 60%), linear-gradient(180deg, var(--g-900), var(--g-950));
+    }
+    .adm-top::before { content: ""; position: absolute; inset: 0; background-image: var(--pattern); background-size: 64px; opacity: .1; }
+    .adm-top > * { position: relative; }
+    .adm-bar { max-width: 1180px; margin: 0 auto; padding: 16px 16px 0; display: flex; align-items: center; gap: 12px; }
+    .adm-bar .logo { width: 40px; height: 40px; flex: none; }
+    .adm-bar h1 { font-family: var(--display); font-weight: 400; font-size: 20px; margin: 0; line-height: 1.2; }
+    .adm-bar small { display: block; color: var(--gold-2); font-size: 12px; font-weight: 600; letter-spacing: .04em; }
+    .adm-bar .sp { flex: 1; min-width: 0; }
+    .icon-btn { width: 40px; height: 40px; border-radius: 12px; border: 1px solid rgba(226, 198, 119, .3); background: rgba(255, 255, 255, .06); color: #fff; display: grid; place-items: center; cursor: pointer; flex: none; }
+    .icon-btn:hover { background: rgba(255, 255, 255, .12); }
+    .tabs { max-width: 1180px; margin: 0 auto; padding: 14px 16px 0; display: flex; gap: 4px; overflow-x: auto; }
+    .tab { border: 0; background: none; color: rgba(255, 255, 255, .7); font-weight: 700; padding: 10px 14px 12px; border-radius: 12px 12px 0 0; cursor: pointer; font-size: 14px; white-space: nowrap; }
+    .tab.on { background: #F5F2EA; color: var(--g-900); }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 18px 14px 60px; }
+
+    .status-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; margin-bottom: 14px; flex-wrap: wrap; }
+    .status-row .lbl { font-size: 13px; color: var(--muted); }
+    .status-row .val { font-weight: 800; font-size: 15px; }
+    .val.buka { color: var(--emerald); } .val.tutup { color: var(--danger); }
+    .switch { position: relative; width: 52px; height: 30px; flex: none; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .switch span { position: absolute; inset: 0; background: #D7D2C5; border-radius: 99px; cursor: pointer; transition: .2s; }
+    .switch span::before { content: ""; position: absolute; width: 24px; height: 24px; left: 3px; top: 3px; background: #fff; border-radius: 50%; transition: .2s; box-shadow: 0 2px 6px rgba(0, 0, 0, .2); }
+    .switch input:checked + span { background: var(--emerald); }
+    .switch input:checked + span::before { transform: translateX(22px); }
+
+    .stats { display: grid; grid-template-columns: 1fr; gap: 12px; margin-bottom: 16px; }
+    .stat { padding: 16px; display: flex; gap: 14px; align-items: center; position: relative; overflow: hidden; }
+    .stat.total { background: linear-gradient(135deg, var(--g-900), var(--g-950)); color: #fff; border: 0; }
+    .stat.total::after { content: ""; position: absolute; right: -30px; top: -30px; width: 150px; height: 150px; background-image: var(--pattern); background-size: 50px; opacity: .14; border-radius: 50%; }
+    .ring { width: 78px; height: 78px; flex: none; position: relative; }
+    .ring svg { transform: rotate(-90deg); }
+    .ring b { position: absolute; inset: 0; display: grid; place-items: center; font-size: 17px; font-weight: 800; color: var(--g-900); }
+    .stat.total .ring b { color: var(--gold-2); }
+    .stat h3 { margin: 0 0 2px; font-size: 13px; color: var(--muted); font-weight: 700; text-transform: uppercase; letter-spacing: .06em; }
+    .stat.total h3 { color: var(--gold-2); }
+    .stat .big { font-family: var(--display); font-size: 28px; line-height: 1.1; color: var(--g-900); }
+    .stat.total .big { color: #fff; }
+    .stat .big small { font-family: var(--font); font-size: 14px; color: var(--muted); }
+    .stat.total .big small { color: rgba(255, 255, 255, .6); }
+    .mini { display: flex; gap: 12px; margin-top: 6px; font-size: 12.5px; color: var(--muted); flex-wrap: wrap; }
+    .stat.total .mini { color: rgba(255, 255, 255, .75); }
+    .mini i { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+    .bar { height: 6px; background: var(--line-2); border-radius: 9px; overflow: hidden; margin-top: 8px; }
+    .bar > div { height: 100%; background: linear-gradient(90deg, var(--emerald), var(--gold)); border-radius: 9px; transition: width .6s; }
+
+    .toolbar { padding: 12px; display: grid; gap: 10px; margin-bottom: 12px; }
+    .seg { display: flex; background: var(--line-2); padding: 4px; border-radius: 12px; gap: 4px; }
+    .seg button { flex: 1; border: 0; background: none; padding: 9px 10px; border-radius: 9px; font-weight: 700; font-size: 13px; color: var(--ink-2); cursor: pointer; white-space: nowrap; }
+    .seg button.on { background: #fff; color: var(--g-900); box-shadow: 0 1px 3px rgba(0, 0, 0, .08); }
+    .tool-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .tool-row .input { padding: 10px 12px; font-size: 14px; }
+    .tool-row .select { padding: 10px 12px; font-size: 14px; width: auto; }
+    .grow { flex: 1; min-width: 160px; }
+
+    .list { display: grid; gap: 8px; }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 8px 12px; padding: 13px 14px; align-items: center; }
+    .row .when { display: flex; align-items: center; gap: 10px; min-width: 0; }
+    .badge-k { width: 46px; height: 46px; flex: none; border-radius: 12px; display: grid; place-items: center; text-align: center; line-height: 1.05; font-weight: 800; color: var(--g-900); background: var(--mint); font-size: 17px; }
+    .badge-k small { display: block; font-size: 9px; letter-spacing: .05em; color: var(--g-700); font-weight: 700; }
+    .badge-k.tarawih { background: #EEF0FA; color: #2A3570; }
+    .badge-k.tarawih small { color: #4B5596; }
+    .row .tg b { display: block; font-size: 14px; color: var(--ink); }
+    .row .tg span { font-size: 12px; color: var(--muted); }
+    .pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 800; letter-spacing: .05em; padding: 4px 9px; border-radius: 99px; }
+    .pill.TERISI { background: var(--mint); color: var(--g-700); }
+    .pill.TERSEDIA { background: var(--gold-soft); color: var(--warn); }
+    .pill.DITUTUP { background: #ECECEC; color: #666; }
+    .pill.AKTIF { background: var(--mint); color: var(--g-700); }
+    .pill.DIBATALKAN { background: var(--danger-soft); color: var(--danger); }
+    .pill.TARAWIH-P { background: #EEF0FA; color: #2A3570; }
+    .row .who { grid-column: 1 / -1; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px; background: #FBFAF6; border: 1px solid var(--line-2); min-width: 0; }
+    .row .who .nm { font-weight: 700; min-width: 0; flex: 1; }
+    .row .who .nm small { display: block; font-weight: 500; font-size: 12px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .row .who.empty-who { color: var(--muted); font-style: italic; font-size: 13px; }
+    .wa-link { display: inline-flex; align-items: center; gap: 5px; font-size: 12.5px; font-weight: 700; color: #128C7E; text-decoration: none; padding: 6px 10px; border-radius: 9px; background: #E7F6F2; flex: none; }
+    .row .acts { grid-column: 1 / -1; display: flex; gap: 6px; flex-wrap: wrap; }
+    .act { border: 1px solid var(--line); background: #fff; border-radius: 9px; padding: 7px 11px; font-size: 12.5px; font-weight: 700; cursor: pointer; color: var(--ink-2); display: inline-flex; align-items: center; gap: 5px; }
+    .act:hover { border-color: #BFD9CC; background: #FBFDFC; }
+    .act.red { color: var(--danger); }
+    .act.red:hover { border-color: #F2B8B2; background: var(--danger-soft); }
+    .act.green { color: var(--g-700); }
+    .count-line { font-size: 13px; color: var(--muted); margin: 4px 2px 10px; }
+
+    .log-item { padding: 12px 14px; display: grid; gap: 4px; }
+    .log-item .top { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+    .log-item .meta { font-size: 12.5px; color: var(--muted); }
+    .log-item .ket { font-size: 12px; color: var(--ink-2); background: #FBFAF6; border-radius: 8px; padding: 6px 9px; margin-top: 3px; }
+
+    .set-grid { display: grid; gap: 14px; }
+    .set-card { padding: 18px; }
+    .set-card h3 { margin: 0 0 4px; font-size: 16px; color: var(--g-900); }
+    .set-card > p { margin: 0 0 14px; font-size: 13px; color: var(--muted); }
+    .two { display: grid; grid-template-columns: 1fr; gap: 12px; }
+    .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .copy-box { display: flex; gap: 8px; }
+    .copy-box .input { font-size: 13px; padding: 10px 12px; }
+
+    .login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; position: relative; overflow: hidden;
+      background: radial-gradient(100% 70% at 50% 0%, rgba(22, 165, 123, .3), transparent 60%), linear-gradient(180deg, var(--g-900), var(--g-950)); }
+    .login-wrap::before { content: ""; position: absolute; inset: 0; background-image: var(--pattern); background-size: 72px; opacity: .12; }
+    .login-card { position: relative; width: 100%; max-width: 400px; padding: 28px 22px 24px; text-align: center; }
+    .login-card h1 { font-family: var(--display); font-weight: 400; font-size: 25px; margin: 8px 0 2px; color: var(--g-900); }
+    .login-card p { margin: 0 0 20px; color: var(--muted); font-size: 13.5px; }
+    .pw-wrap { position: relative; text-align: left; }
+    .pw-wrap button { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); border: 0; background: none; color: var(--muted); cursor: pointer; padding: 8px; font-size: 12px; font-weight: 700; }
+
+    .warn-banner { display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: 12px; background: #FFF8E6; border: 1px solid #F0DDA5; color: #6B5413; font-size: 13.5px; margin-bottom: 14px; }
+    .loading-cover { padding: 50px 0; text-align: center; color: var(--muted); }
+    .loading-cover .spinner { margin: 0 auto 10px; width: 28px; height: 28px; border-color: rgba(11, 61, 46, .15); border-top-color: var(--g-900); }
+
+    @media (min-width: 720px) {
+      .stats { grid-template-columns: 1.2fr 1fr 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+      .two { grid-template-columns: 1fr 1fr; }
+      .set-grid { grid-template-columns: 1.4fr 1fr; align-items: start; }
+    }
+    @media (min-width: 980px) {
+      .row { grid-template-columns: 240px 110px minmax(0, 1fr) auto; }
+      .row .who { grid-column: auto; background: none; border: 0; padding: 0; }
+      .row .acts { grid-column: auto; justify-content: flex-end; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===================== LOGIN ===================== -->
+<div class="login-wrap" id="loginView">
+  <form class="card login-card" id="loginForm">
+    <svg width="54" height="54" viewBox="0 0 64 64" aria-hidden="true">
+      <defs><linearGradient id="lg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E2C677"/><stop offset="1" stop-color="#A9822F"/></linearGradient></defs>
+      <path d="M38 6a26 26 0 1 0 20 42A22 22 0 1 1 38 6z" fill="url(#lg)"/>
+      <path d="M46 17l1.9 4.4 4.8.4-3.6 3.2 1.1 4.7L46 27.2l-4.2 2.5 1.1-4.7-3.6-3.2 4.8-.4z" fill="#C9A24A"/>
+    </svg>
+    <h1>Dashboard Administrator</h1>
+    <p>Kultum Ramadan 1448 H · <?= namaMasjid ?></p>
+    <div class="field" style="text-align:left">
+      <label class="label" for="pw">Password Admin</label>
+      <div class="pw-wrap">
+        <input class="input" type="password" id="pw" autocomplete="current-password" placeholder="Masukkan password" required>
+        <button type="button" id="pwToggle">LIHAT</button>
+      </div>
+    </div>
+    <div id="loginErr"></div>
+    <button class="btn btn-primary btn-block" id="loginBtn" type="submit">Masuk</button>
+    <p class="hint" style="margin:16px 0 0"><a href="<?= baseUrl ?>" target="_top">← Kembali ke halaman pendaftaran</a></p>
+  </form>
+</div>
+
+<!-- ===================== APP ===================== -->
+<div id="appView" hidden>
+  <header class="adm-top">
+    <div class="adm-bar">
+      <svg class="logo" viewBox="0 0 64 64" aria-hidden="true"><path d="M38 6a26 26 0 1 0 20 42A22 22 0 1 1 38 6z" fill="#E2C677"/><path d="M46 17l1.9 4.4 4.8.4-3.6 3.2 1.1 4.7L46 27.2l-4.2 2.5 1.1-4.7-3.6-3.2 4.8-.4z" fill="#E2C677"/></svg>
+      <div class="sp"><small id="admMasjid"><?= namaMasjid ?></small><h1>Dashboard Kultum Ramadan</h1></div>
+      <button class="icon-btn" id="reloadBtn" title="Muat ulang data"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+      <button class="icon-btn" id="logoutBtn" title="Keluar"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg></button>
+    </div>
+    <nav class="tabs">
+      <button class="tab on" data-tab="jadwal">Jadwal</button>
+      <button class="tab" data-tab="ustadz">Per Ustadz</button>
+      <button class="tab" data-tab="riwayat">Riwayat</button>
+      <button class="tab" data-tab="pengaturan">Pengaturan</button>
+    </nav>
+  </header>
+
+  <div class="wrap">
+    <div class="warn-banner" id="pwWarn" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <div>Anda masih memakai <b>password awal</b>. Segera ganti di tab <b>Pengaturan</b>.</div>
+    </div>
+
+    <div id="loadingCover" class="loading-cover"><div class="spinner"></div>Memuat data…</div>
+
+    <!-- ========== TAB JADWAL ========== -->
+    <section id="tab-jadwal" hidden>
+      <div class="card status-row">
+        <div><div class="lbl">Status pendaftaran publik</div><div class="val" id="regStatus">-</div></div>
+        <label class="switch" title="Buka / tutup pendaftaran"><input type="checkbox" id="regSwitch"><span></span></label>
+      </div>
+
+      <div class="stats" id="stats"></div>
+
+      <div class="card toolbar">
+        <div class="seg" id="segJenis">
+          <button data-v="ALL" class="on">Semua</button>
+          <button data-v="SUBUH">Kultum Subuh</button>
+          <button data-v="TARAWIH">Kultum Tarawih</button>
+        </div>
+        <div class="tool-row">
+          <select class="select" id="fStatus">
+            <option value="ALL">Semua status</option>
+            <option value="TERISI">Terisi</option>
+            <option value="TERSEDIA">Belum terisi</option>
+            <option value="DITUTUP">Ditutup</option>
+          </select>
+          <input class="input grow" id="fSearch" type="search" placeholder="Cari nama ustadz / nomor / ID…">
+          <button class="btn btn-ghost btn-sm" id="xlsBtn" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Excel</button>
+          <button class="btn btn-ghost btn-sm" id="pdfBtn" type="button">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button>
+        </div>
+      </div>
+      <div class="count-line" id="countLine"></div>
+      <div class="list" id="slotList"></div>
+    </section>
+
+    <!-- ========== TAB PER USTADZ ========== -->
+    <section id="tab-ustadz" hidden>
+      <p class="count-line" id="peopleLine">Daftar pemateri beserta semua jadwal Subuh &amp; Tarawih yang dipegangnya.</p>
+      <div class="list" id="peopleList"></div>
+    </section>
+
+    <!-- ========== TAB RIWAYAT ========== -->
+    <section id="tab-riwayat" hidden>
+      <p class="count-line">40 aktivitas pendaftaran terbaru (termasuk yang dibatalkan). Data lengkap ada di sheet <b>DATA PENDAFTAR</b>.</p>
+      <div class="list" id="logList"></div>
+    </section>
+
+    <!-- ========== TAB PENGATURAN ========== -->
+    <section id="tab-pengaturan" hidden>
+      <div class="set-grid">
+        <form class="card set-card" id="setForm">
+          <h3>Pengaturan Umum &amp; Kalender</h3>
+          <p>Tanggal ke-1 bersifat perkiraan. Sesuaikan dengan hasil sidang isbat, lalu tekan <b>Simpan &amp; Terapkan Kalender</b>.</p>
+          <div class="field"><label class="label" for="sNama">Nama Masjid / Musholla</label><input class="input" id="sNama" maxlength="120"></div>
+          <div class="two">
+            <div class="field"><label class="label" for="sTglS">Tanggal Kultum Subuh Ramadan ke-1</label><input class="input" type="date" id="sTglS" required></div>
+            <div class="field"><label class="label" for="sTglT">Tanggal Kultum Tarawih Malam ke-1</label><input class="input" type="date" id="sTglT" required></div>
+            <div class="field"><label class="label" for="sJamS">Jam Kultum Subuh</label><input class="input" type="time" id="sJamS" required></div>
+            <div class="field"><label class="label" for="sJamT">Jam Kultum Tarawih</label><input class="input" type="time" id="sJamT" required></div>
+            <div class="field"><label class="label" for="sSlot">Jumlah Slot per Jenis</label><input class="input" type="number" min="1" max="31" id="sSlot" required></div>
+            <div class="field"><label class="label" for="sDur">Durasi Kultum (menit)</label><input class="input" type="number" min="1" max="120" id="sDur"></div>
+            <div class="field"><label class="label" for="sMaks">Maks. Jadwal per Ustadz per Jenis</label><input class="input" type="number" min="0" max="31" id="sMaks"><div class="hint">0 = tanpa batas (disarankan)</div></div>
+            <div class="field"><label class="label" for="sStatus">Status Pendaftaran</label><select class="select" id="sStatus"><option value="BUKA">BUKA</option><option value="TUTUP">TUTUP</option></select></div>
+          </div>
+          <div class="field"><label class="label" for="sWa">No. WhatsApp Panitia (opsional)</label><input class="input" id="sWa" type="tel" placeholder="08xxxxxxxxxx"></div>
+          <div class="field"><label class="label" for="sLok">Lokasi / Alamat (opsional)</label><input class="input" id="sLok" maxlength="200"></div>
+          <div class="field"><label class="label" for="sUmum">Pengumuman di Halaman Pendaftaran</label><textarea class="textarea" id="sUmum" maxlength="600"></textarea></div>
+          <div class="btn-row">
+            <button class="btn btn-ghost" type="button" id="saveBtn">Simpan</button>
+            <button class="btn btn-primary" type="button" id="saveCalBtn">Simpan &amp; Terapkan Kalender</button>
+          </div>
+          <p class="hint">“Terapkan Kalender” menghitung ulang semua tanggal dari tanggal ke-1. Data ustadz yang sudah terdaftar tetap pada Ramadan ke-/Malam ke- yang sama.</p>
+        </form>
+
+        <div style="display:grid;gap:14px">
+          <div class="card set-card">
+            <h3>Tautan</h3>
+            <p>Bagikan tautan pendaftaran kepada para ustadz.</p>
+            <div class="field"><label class="label">Halaman Pendaftaran</label>
+              <div class="copy-box"><input class="input" id="linkPub" readonly><button class="btn btn-ghost btn-sm" type="button" data-copy="linkPub">Salin</button></div></div>
+            <div class="field"><label class="label">Dashboard Admin</label>
+              <div class="copy-box"><input class="input" id="linkAdm" readonly><button class="btn btn-ghost btn-sm" type="button" data-copy="linkAdm">Salin</button></div></div>
+            <a class="btn btn-ghost btn-block" id="sheetLink" href="#" target="_blank" rel="noopener">Buka Google Sheets</a>
+          </div>
+          <form class="card set-card" id="pwForm">
+            <h3>Ganti Password Admin</h3>
+            <p>Minimal 6 karakter.</p>
+            <div class="field"><label class="label" for="pwOld">Password lama</label><input class="input" type="password" id="pwOld" autocomplete="current-password"></div>
+            <div class="field"><label class="label" for="pwNew">Password baru</label><input class="input" type="password" id="pwNew" autocomplete="new-password"></div>
+            <div class="field"><label class="label" for="pwNew2">Ulangi password baru</label><input class="input" type="password" id="pwNew2" autocomplete="new-password"></div>
+            <button class="btn btn-primary btn-block" type="submit" id="pwBtn">Ganti Password</button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts" aria-live="polite"></div>
+<div id="modalRoot"></div>
+
+<script>
+(function () {
+  'use strict';
+  var BASE_URL = '<?= baseUrl ?>';
+  var A = { token: null, data: null, jenis: 'ALL', status: 'ALL', q: '', tab: 'jadwal' };
+  var LABEL = { SUBUH: 'Kultum Subuh', TARAWIH: 'Kultum Tarawih' };
+  var URUT = { SUBUH: 'Ramadan ke-', TARAWIH: 'Malam ke-' };
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  function store(k, v) { try { if (v === null) sessionStorage.removeItem(k); else if (v !== undefined) sessionStorage.setItem(k, v); return sessionStorage.getItem(k); } catch (e) { return null; } }
+
+  function api(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    if (window.google && google.script && google.script.run) {
+      return new Promise(function (resolve, reject) {
+        var r = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+        r[fn].apply(r, args);
+      });
+    }
+    // Mode mandiri (GitHub Pages, dsb.): panggil API JSON Apps Script TANPA cookie,
+    // sehingga tidak terpengaruh akun Google yang sedang login di browser.
+    return fetch(window.KULTUM_API, {
+      method: 'POST', redirect: 'follow', credentials: 'omit', cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: fn, args: args })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('Server tidak merespons (HTTP ' + r.status + ').');
+      return r.json();
+    }, function () {
+      throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet lalu coba lagi.');
+    });
+  }
+  function adm(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    return api.apply(null, [fn, A.token].concat(args)).then(function (res) {
+      if (res && res.code === 'AUTH') { logout(true); throw new Error(res.message); }
+      return res;
+    });
+  }
+
+  function toast(msg, type, ms) {
+    var el = document.createElement('div');
+    el.className = 'toast ' + (type || '');
+    el.textContent = msg;
+    var box = $('toasts');
+    while (box.children.length >= 2) box.removeChild(box.firstChild);
+    box.appendChild(el);
+    setTimeout(function () { el.style.transition = 'opacity .3s'; el.style.opacity = '0'; setTimeout(function () { el.remove(); }, 300); }, ms || 4000);
+  }
+
+  function btnBusy(btn, on, text) {
+    if (on) { btn.dataset.html = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>' + (text || 'Memproses…'); }
+    else { btn.disabled = false; if (btn.dataset.html) btn.innerHTML = btn.dataset.html; }
+  }
+
+  // ===================== LOGIN =====================
+  $('pwToggle').addEventListener('click', function () {
+    var p = $('pw'); p.type = p.type === 'password' ? 'text' : 'password';
+    this.textContent = p.type === 'password' ? 'LIHAT' : 'SEMBUNYI';
+  });
+
+  $('loginForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var b = $('loginBtn');
+    $('loginErr').innerHTML = '';
+    btnBusy(b, true, 'Memeriksa…');
+    api('adminLogin', $('pw').value).then(function (res) {
+      if (!res.ok) { $('loginErr').innerHTML = '<div class="alert">' + esc(res.message) + '</div>'; return; }
+      A.token = res.token; store('kultumAdm', res.token);
+      if (res.defaultPassword) store('kultumPwWarn', '1'); else store('kultumPwWarn', null);
+      $('pw').value = '';
+      enterApp();
+    }).catch(function (e) {
+      $('loginErr').innerHTML = '<div class="alert">' + esc(e.message || e) + '</div>';
+    }).then(function () { btnBusy(b, false); });
+  });
+
+  function enterApp() {
+    $('loginView').hidden = true; $('appView').hidden = false;
+    $('pwWarn').hidden = store('kultumPwWarn') !== '1';
+    refresh(true);
+  }
+
+  function logout(expired) {
+    if (A.token && !expired) api('adminLogout', A.token);
+    A.token = null; store('kultumAdm', null);
+    $('appView').hidden = true; $('loginView').hidden = false;
+    if (expired) $('loginErr').innerHTML = '<div class="alert">Sesi berakhir. Silakan login kembali.</div>';
+  }
+  $('logoutBtn').addEventListener('click', function () { logout(false); });
+
+  // ===================== DATA =====================
+  function refresh(first) {
+    if (first) { $('loadingCover').hidden = false; showTab(null); }
+    return adm('adminGetDashboard').then(function (res) {
+      if (!res.ok) throw new Error(res.message);
+      A.data = res;
+      $('loadingCover').hidden = true;
+      if (first) showTab(A.tab);
+      renderAll();
+    }).catch(function (e) {
+      $('loadingCover').hidden = true;
+      if (A.token) toast('Gagal memuat: ' + (e.message || e), 'err', 6000);
+    });
+  }
+  $('reloadBtn').addEventListener('click', function () { refresh(false).then(function () { if (A.data) toast('Data diperbarui.'); }); });
+
+  function renderAll() {
+    var d = A.data;
+    $('admMasjid').textContent = d.settings.NAMA_MASJID || '';
+    renderStatus(); renderStats(); renderList(); renderPeople(); renderLog(); fillSettings();
+  }
+
+  function renderStatus() {
+    var open = A.data.settings.STATUS_PENDAFTARAN === 'BUKA';
+    $('regStatus').textContent = open ? 'BUKA — menerima pendaftaran' : 'TUTUP — pendaftaran ditutup';
+    $('regStatus').className = 'val ' + (open ? 'buka' : 'tutup');
+    $('regSwitch').checked = open;
+  }
+
+  $('regSwitch').addEventListener('change', function () {
+    var sw = this, open = sw.checked;
+    sw.disabled = true;
+    adm('adminSetRegistrationOpen', open).then(function (res) {
+      if (!res.ok) throw new Error(res.message);
+      A.data.settings.STATUS_PENDAFTARAN = open ? 'BUKA' : 'TUTUP';
+      renderStatus(); fillSettings();
+      toast(res.message);
+    }).catch(function (e) { sw.checked = !open; toast(e.message || e, 'err'); })
+      .then(function () { sw.disabled = false; });
+  });
+
+  function ring(pct, total) {
+    var r = 32, c = 2 * Math.PI * r, off = c * (1 - Math.min(100, pct) / 100);
+    var track = total ? 'rgba(255,255,255,.15)' : '#EFEBE1';
+    return '<div class="ring"><svg width="78" height="78" viewBox="0 0 78 78"><circle cx="39" cy="39" r="' + r + '" fill="none" stroke="' + track + '" stroke-width="8"/>' +
+      '<circle cx="39" cy="39" r="' + r + '" fill="none" stroke="' + (total ? '#E2C677' : '#0F8A66') + '" stroke-width="8" stroke-linecap="round" stroke-dasharray="' + c.toFixed(1) + '" stroke-dashoffset="' + off.toFixed(1) + '"/></svg><b>' + Math.round(pct) + '%</b></div>';
+  }
+
+  function renderStats() {
+    var s = A.data.stats;
+    function card(title, st, cls) {
+      var tot = cls === 'total';
+      return '<div class="card stat ' + (cls || '') + '">' + ring(st.persen, tot) +
+        '<div style="flex:1;min-width:0"><h3>' + title + '</h3><div class="big">' + st.terisi + ' <small>/ ' + st.total + ' terisi</small></div>' +
+        '<div class="mini"><span><i style="background:#C9A24A"></i>' + st.tersedia + ' belum terisi</span>' +
+        (st.ditutup ? '<span><i style="background:#999"></i>' + st.ditutup + ' ditutup</span>' : '') + '</div>' +
+        (tot ? '' : '<div class="bar"><div style="width:' + st.persen + '%"></div></div>') + '</div></div>';
+    }
+    $('stats').innerHTML = card('Keterisian Total', s.ALL, 'total') + card('Kultum Subuh', s.SUBUH) + card('Kultum Tarawih', s.TARAWIH);
+  }
+
+  function allSlots() {
+    var d = A.data, out = [];
+    if (A.jenis !== 'TARAWIH') out = out.concat(d.slots.SUBUH);
+    if (A.jenis !== 'SUBUH') out = out.concat(d.slots.TARAWIH);
+    if (A.jenis === 'ALL') out.sort(function (a, b) { return a.hariKe - b.hariKe || (a.jenis === 'TARAWIH' ? -1 : 1); });
+    return out;
+  }
+
+  function renderList() {
+    var q = A.q.toLowerCase();
+    var list = allSlots().filter(function (s) {
+      if (A.status !== 'ALL' && s.status !== A.status) return false;
+      if (q && (s.nama + ' ' + s.wa + ' ' + s.id + ' ' + s.tanggal + ' ' + s.catatan).toLowerCase().indexOf(q) === -1) return false;
+      return true;
+    });
+    $('countLine').textContent = 'Menampilkan ' + list.length + ' slot';
+    if (!list.length) { $('slotList').innerHTML = '<div class="empty"><b>Tidak ada data</b>Coba ubah filter atau kata kunci pencarian.</div>'; return; }
+    $('slotList').innerHTML = list.map(function (s) {
+      var key = 'data-j="' + s.jenis + '" data-k="' + s.hariKe + '"';
+      var who, acts;
+      if (s.status === 'TERISI') {
+        who = '<div class="who"><div class="nm">' + esc(s.nama) + '<small>' + esc(s.wa ? '+' + s.wa : 'tanpa nomor') + ' · ' + esc(s.id) + (s.catatan ? ' · ' + esc(s.catatan) : '') + '</small></div>' +
+          (s.wa ? '<a class="wa-link" href="https://wa.me/' + esc(s.wa) + '" target="_blank" rel="noopener">WA</a>' : '') + '</div>';
+        acts = '<button class="act" data-a="edit" ' + key + '>Edit</button><button class="act" data-a="move" ' + key + '>Pindah</button>' +
+          '<button class="act red" data-a="cancel" ' + key + '>Batalkan</button><button class="act red" data-a="delete" ' + key + '>Hapus</button>';
+      } else if (s.status === 'DITUTUP') {
+        who = '<div class="who empty-who">Ditutup' + (s.catatan ? ' — ' + esc(s.catatan) : '') + '</div>';
+        acts = '<button class="act green" data-a="open" ' + key + '>Buka Kembali</button><button class="act" data-a="assign" ' + key + '>Isi Manual</button>';
+      } else {
+        who = '<div class="who empty-who">Belum ada pemateri</div>';
+        acts = '<button class="act green" data-a="assign" ' + key + '>Isi Manual</button><button class="act" data-a="close" ' + key + '>Tutup Slot</button>';
+      }
+      return '<div class="card row"><div class="when"><div class="badge-k ' + s.jenis.toLowerCase() + '"><div><small>' + (s.jenis === 'SUBUH' ? 'SUBUH' : 'MALAM') + '</small>' + s.hariKe + '</div></div>' +
+        '<div class="tg"><b>' + esc(s.tanggal) + '</b><span>' + LABEL[s.jenis] + ' · ' + esc(s.urutan) + '</span></div></div>' +
+        '<div><span class="pill ' + s.status + '">' + (s.status === 'TERSEDIA' ? 'BELUM TERISI' : s.status) + '</span></div>' + who +
+        '<div class="acts">' + acts + '</div></div>';
+    }).join('');
+  }
+
+  document.querySelectorAll('#segJenis button').forEach(function (b) {
+    b.addEventListener('click', function () {
+      A.jenis = b.dataset.v;
+      document.querySelectorAll('#segJenis button').forEach(function (x) { x.classList.toggle('on', x === b); });
+      renderList();
+    });
+  });
+  $('fStatus').addEventListener('change', function () { A.status = this.value; renderList(); });
+  $('fSearch').addEventListener('input', function () { A.q = this.value.trim(); renderList(); });
+
+  function renderPeople() {
+    var per = {}, order = [];
+    ['SUBUH', 'TARAWIH'].forEach(function (j) {
+      A.data.slots[j].forEach(function (s) {
+        if (s.status !== 'TERISI') return;
+        var k = s.wa || s.nama.toLowerCase();
+        if (!per[k]) { per[k] = { nama: s.nama, wa: s.wa, SUBUH: [], TARAWIH: [] }; order.push(k); }
+        per[k][j].push(s);
+      });
+    });
+    var people = order.map(function (k) { return per[k]; }).sort(function (a, b) { return a.nama.toLowerCase() < b.nama.toLowerCase() ? -1 : 1; });
+    $('peopleLine').textContent = people.length + ' pemateri terdaftar. Satu ustadz bisa memegang beberapa jadwal Subuh dan Tarawih.';
+    if (!people.length) { $('peopleList').innerHTML = '<div class="empty"><b>Belum ada pemateri</b>Data akan muncul setelah ada yang mendaftar.</div>'; return; }
+    function chips(list, j) {
+      if (!list.length) return '<span style="color:var(--muted)">—</span>';
+      return list.map(function (s) { return '<span class="pill ' + (j === 'SUBUH' ? 'TERISI' : 'TARAWIH-P') + '" style="margin:2px 4px 2px 0">' + s.hariKe + ' · ' + esc(s.tglPendek) + '</span>'; }).join('');
+    }
+    $('peopleList').innerHTML = people.map(function (p) {
+      var n = p.SUBUH.length + p.TARAWIH.length;
+      return '<div class="card log-item"><div class="top"><div><b>' + esc(p.nama) + '</b><div class="meta">' + esc(p.wa ? '+' + p.wa : 'tanpa nomor') + '</div></div>' +
+        '<div style="display:flex;gap:8px;align-items:center">' + (p.wa ? '<a class="wa-link" href="https://wa.me/' + esc(p.wa) + '" target="_blank" rel="noopener">WA</a>' : '') +
+        '<span class="pick-badge">' + n + ' jadwal</span></div></div>' +
+        '<div class="meta" style="margin-top:6px"><b style="color:var(--g-700)">Subuh</b> (Ramadan ke-)</div><div>' + chips(p.SUBUH, 'SUBUH') + '</div>' +
+        '<div class="meta" style="margin-top:4px"><b style="color:#2A3570">Tarawih</b> (Malam ke-)</div><div>' + chips(p.TARAWIH, 'TARAWIH') + '</div></div>';
+    }).join('');
+  }
+
+  function renderLog() {
+    var log = A.data.log || [];
+    if (!log.length) { $('logList').innerHTML = '<div class="empty"><b>Belum ada pendaftar</b>Riwayat akan muncul setelah ada yang mendaftar.</div>'; return; }
+    $('logList').innerHTML = log.map(function (l) {
+      return '<div class="card log-item"><div class="top"><b>' + esc(l.nama) + '</b><span class="pill ' + esc(l.status) + '">' + esc(l.status) + '</span></div>' +
+        '<div class="meta">' + esc(l.jenis) + ' · ke-' + esc(l.ke) + ' · ' + esc(l.tanggal) + '</div>' +
+        '<div class="meta">' + esc(l.id) + ' · ' + esc(l.wa ? '+' + l.wa : '-') + ' · daftar ' + esc(l.waktu) + ' via ' + esc(l.sumber) + '</div>' +
+        (l.ket ? '<div class="ket">' + esc(l.ket) + '</div>' : '') + '</div>';
+    }).join('');
+  }
+
+  // ===================== TAB =====================
+  function showTab(t) {
+    ['jadwal', 'ustadz', 'riwayat', 'pengaturan'].forEach(function (x) { $('tab-' + x).hidden = x !== t; });
+    if (t) { A.tab = t; document.querySelectorAll('.tab').forEach(function (b) { b.classList.toggle('on', b.dataset.tab === t); }); }
+  }
+  document.querySelectorAll('.tab').forEach(function (b) {
+    b.addEventListener('click', function () { if (A.data) showTab(b.dataset.tab); else A.tab = b.dataset.tab; });
+  });
+
+  // ===================== MODAL =====================
+  function modal(o) {
+    var root = $('modalRoot');
+    root.innerHTML = '<div class="modal-back"><div class="modal" role="dialog" aria-modal="true">' +
+      '<div class="modal-head"><div><h3>' + esc(o.title) + '</h3>' + (o.sub ? '<p>' + esc(o.sub) + '</p>' : '') + '</div>' +
+      '<button class="x-btn" type="button" data-close aria-label="Tutup">✕</button></div>' +
+      '<div class="modal-body">' + (o.body || '') + '<div id="mErr"></div></div>' +
+      '<div class="modal-foot"><button class="btn btn-ghost" type="button" data-close>Batal</button>' +
+      '<button class="btn ' + (o.danger ? 'btn-danger' : 'btn-primary') + '" type="button" id="mOk">' + esc(o.ok || 'Simpan') + '</button></div></div></div>';
+    var back = root.firstChild;
+    function close() { root.innerHTML = ''; }
+    back.addEventListener('click', function (e) { if (e.target === back || e.target.hasAttribute('data-close')) close(); });
+    if (o.onOpen) o.onOpen();
+    var first = root.querySelector('input, select, textarea'); if (first) setTimeout(function () { first.focus(); }, 50);
+    $('mOk').addEventListener('click', function () {
+      var btn = this;
+      $('mErr').innerHTML = '';
+      var v;
+      try { v = o.collect ? o.collect() : {}; } catch (err) { $('mErr').innerHTML = '<div class="alert" style="margin-top:10px">' + esc(err.message) + '</div>'; return; }
+      btnBusy(btn, true);
+      o.run(v).then(function (res) {
+        if (!res || !res.ok) throw new Error(res && res.message || 'Gagal');
+        close(); toast(res.message || 'Berhasil.');
+        return refresh(false);
+      }).catch(function (e) {
+        btnBusy(btn, false);
+        if ($('mErr')) $('mErr').innerHTML = '<div class="alert" style="margin-top:10px">' + esc(e.message || e) + '</div>';
+      });
+    });
+  }
+
+  function findSlot(j, k) {
+    var l = A.data.slots[j] || [];
+    for (var i = 0; i < l.length; i++) if (l[i].hariKe === k) return l[i];
+    return null;
+  }
+  function val(id) { var el = $(id); return el ? el.value.trim() : ''; }
+  function personFields(s) {
+    s = s || {};
+    return '<div class="field"><label class="label" for="mNama">Nama Ustadz *</label><input class="input" id="mNama" maxlength="100" value="' + esc(s.nama || '') + '"></div>' +
+      '<div class="field"><label class="label" for="mWa">No. WhatsApp</label><input class="input" id="mWa" type="tel" value="' + esc(s.wa || '') + '" placeholder="08xxxxxxxxxx"></div>' +
+      '<div class="field"><label class="label" for="mCat">Catatan (opsional)</label><input class="input" id="mCat" maxlength="200" value="' + esc(s.catatan || '') + '"></div>';
+  }
+  function collectPerson() {
+    var nama = val('mNama');
+    if (nama.length < 3) throw new Error('Nama ustadz minimal 3 huruf.');
+    return { nama: nama, wa: val('mWa'), catatan: val('mCat') };
+  }
+  function slotTitle(s) { return LABEL[s.jenis] + ' · ' + s.urutan + ' — ' + s.tanggal; }
+
+  $('slotList').addEventListener('click', function (ev) {
+    var b = ev.target.closest('[data-a]');
+    if (!b) return;
+    var s = findSlot(b.dataset.j, Number(b.dataset.k));
+    if (!s) return;
+    var base = { jenis: s.jenis, hariKe: s.hariKe };
+    var a = b.dataset.a;
+
+    if (a === 'edit') modal({
+      title: 'Edit Data Pemateri', sub: slotTitle(s), body: personFields(s), collect: collectPerson,
+      run: function (v) { return adm('adminEdit', Object.assign({}, base, v)); }
+    });
+    if (a === 'assign') modal({
+      title: 'Isi Jadwal Manual', sub: slotTitle(s), body: personFields({}), ok: 'Isi Jadwal', collect: collectPerson,
+      run: function (v) { return adm('adminAssign', Object.assign({}, base, v)); }
+    });
+    if (a === 'cancel') modal({
+      title: 'Batalkan Jadwal?', sub: s.nama + ' · ' + slotTitle(s), danger: true, ok: 'Ya, Batalkan',
+      body: '<p style="margin:0 0 12px;font-size:14px;color:var(--ink-2)">Tanggal ini akan <b>kembali tersedia</b> untuk pendaftar lain. Riwayat tetap tersimpan dengan status DIBATALKAN.</p>' +
+        '<div class="field"><label class="label" for="mAlasan">Alasan (opsional)</label><input class="input" id="mAlasan" maxlength="200" placeholder="mis. berhalangan hadir"></div>',
+      collect: function () { return { alasan: val('mAlasan') }; },
+      run: function (v) { return adm('adminCancel', Object.assign({}, base, v)); }
+    });
+    if (a === 'delete') modal({
+      title: 'Hapus Data Pendaftar?', sub: s.nama + ' · ' + slotTitle(s), danger: true, ok: 'Ya, Hapus Permanen',
+      body: '<p style="margin:0;font-size:14px;color:var(--ink-2)">Data pendaftar akan <b>dihapus permanen</b> dari jadwal dan dari sheet DATA PENDAFTAR. Tindakan ini tidak dapat dibatalkan. Gunakan <b>Batalkan</b> bila ingin tetap menyimpan riwayat.</p>',
+      run: function () { return adm('adminDelete', base); }
+    });
+    if (a === 'close') modal({
+      title: 'Tutup Slot', sub: slotTitle(s), ok: 'Tutup Slot',
+      body: '<p style="margin:0 0 12px;font-size:14px;color:var(--ink-2)">Slot yang ditutup tidak tampil di halaman pendaftaran.</p>' +
+        '<div class="field"><label class="label" for="mCat">Keterangan (opsional)</label><input class="input" id="mCat" maxlength="200" placeholder="mis. Diisi Imam Besar / Nuzulul Qur\'an"></div>',
+      collect: function () { return { catatan: val('mCat') }; },
+      run: function (v) { return adm('adminSetSlotOpen', Object.assign({}, base, v, { open: false })); }
+    });
+    if (a === 'open') modal({
+      title: 'Buka Kembali Slot?', sub: slotTitle(s), ok: 'Buka Kembali',
+      body: '<p style="margin:0;font-size:14px;color:var(--ink-2)">Slot akan tampil lagi dan dapat dipilih oleh pendaftar.</p>',
+      run: function () { return adm('adminSetSlotOpen', Object.assign({}, base, { open: true })); }
+    });
+    if (a === 'move') modal({
+      title: 'Pindah / Ganti Jadwal', sub: s.nama + ' · saat ini ' + slotTitle(s), ok: 'Pindahkan',
+      body: '<div class="field"><label class="label" for="mJ">Jenis kultum tujuan</label><select class="select" id="mJ">' +
+        '<option value="SUBUH"' + (s.jenis === 'SUBUH' ? ' selected' : '') + '>Kultum Subuh</option>' +
+        '<option value="TARAWIH"' + (s.jenis === 'TARAWIH' ? ' selected' : '') + '>Kultum Tarawih</option></select></div>' +
+        '<div class="field"><label class="label" for="mK">Tanggal tujuan (yang masih kosong)</label><select class="select" id="mK"></select></div>',
+      onOpen: function () {
+        function fill() {
+          var j = $('mJ').value;
+          var free = A.data.slots[j].filter(function (x) { return x.status === 'TERSEDIA'; });
+          $('mK').innerHTML = free.length ? free.map(function (x) { return '<option value="' + x.hariKe + '">' + esc(x.urutan + ' — ' + x.tanggal) + '</option>'; }).join('')
+            : '<option value="">Tidak ada tanggal kosong</option>';
+        }
+        $('mJ').addEventListener('change', fill); fill();
+      },
+      collect: function () {
+        if (!val('mK')) throw new Error('Pilih tanggal tujuan.');
+        return { toJenis: val('mJ'), toHariKe: Number(val('mK')) };
+      },
+      run: function (v) { return adm('adminMove', Object.assign({}, base, v)); }
+    });
+  });
+
+  // ===================== EXPORT =====================
+  function download(res) {
+    var bin = atob(res.base64), arr = new Uint8Array(bin.length);
+    for (var i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+    var url = URL.createObjectURL(new Blob([arr], { type: res.mime }));
+    var a = document.createElement('a');
+    a.href = url; a.download = res.filename; a.rel = 'noopener';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+  }
+  function doExport(fmt, btn) {
+    btnBusy(btn, true, 'Menyiapkan…');
+    adm('adminExport', fmt).then(function (res) {
+      if (!res.ok) throw new Error(res.message);
+      download(res); toast('File ' + res.filename + ' diunduh.');
+    }).catch(function (e) { toast('Export gagal: ' + (e.message || e), 'err', 6000); })
+      .then(function () { btnBusy(btn, false); });
+  }
+  $('xlsBtn').addEventListener('click', function () { doExport('xlsx', this); });
+  $('pdfBtn').addEventListener('click', function () { doExport('pdf', this); });
+
+  // ===================== PENGATURAN =====================
+  function fillSettings() {
+    var s = A.data.settings;
+    $('sNama').value = s.NAMA_MASJID || ''; $('sTglS').value = s.TGL_SUBUH_1; $('sTglT').value = s.TGL_TARAWIH_1;
+    $('sJamS').value = s.JAM_SUBUH; $('sJamT').value = s.JAM_TARAWIH; $('sSlot').value = s.JUMLAH_SLOT;
+    $('sDur').value = s.DURASI_MENIT; $('sMaks').value = s.MAKS_PER_USTADZ; $('sStatus').value = s.STATUS_PENDAFTARAN;
+    $('sWa').value = s.WA_PANITIA || ''; $('sLok').value = s.LOKASI || ''; $('sUmum').value = s.PENGUMUMAN || '';
+    if (window.KULTUM_STANDALONE) {
+      $('linkPub').value = new URL('./', location.href).href;
+      $('linkAdm').value = new URL('admin.html', location.href).href;
+    } else {
+      var url = A.data.webAppUrl || BASE_URL;
+      $('linkPub').value = url; $('linkAdm').value = url ? url + '?page=admin' : '';
+    }
+    $('sheetLink').href = A.data.spreadsheetUrl || '#';
+  }
+  function collectSettings() {
+    return {
+      NAMA_MASJID: val('sNama'), TGL_SUBUH_1: val('sTglS'), TGL_TARAWIH_1: val('sTglT'), JAM_SUBUH: val('sJamS'),
+      JAM_TARAWIH: val('sJamT'), JUMLAH_SLOT: val('sSlot'), DURASI_MENIT: val('sDur'), MAKS_PER_USTADZ: val('sMaks'),
+      STATUS_PENDAFTARAN: val('sStatus'), WA_PANITIA: val('sWa'), LOKASI: val('sLok'), PENGUMUMAN: val('sUmum')
+    };
+  }
+  function saveSettings(applyCal, btn) {
+    var go = function () {
+      btnBusy(btn, true, 'Menyimpan…');
+      adm('adminSaveSettings', collectSettings(), applyCal).then(function (res) {
+        if (!res.ok) throw new Error(res.message);
+        toast(res.message); return refresh(false);
+      }).catch(function (e) { toast(e.message || e, 'err', 7000); })
+        .then(function () { btnBusy(btn, false); });
+    };
+    if (!applyCal) return go();
+    modal({
+      title: 'Terapkan Kalender?', ok: 'Ya, Terapkan',
+      body: '<p style="margin:0;font-size:14px;color:var(--ink-2)">Semua tanggal pada JADWAL SUBUH dan JADWAL TARAWIH akan dihitung ulang mulai <b>' +
+        esc(val('sTglS')) + '</b> (Subuh) dan <b>' + esc(val('sTglT')) + '</b> (Tarawih) untuk <b>' + esc(val('sSlot')) +
+        '</b> slot. Pemateri yang sudah terdaftar tetap pada Ramadan ke-/Malam ke- yang sama.</p>',
+      run: function () { return adm('adminSaveSettings', collectSettings(), true); }
+    });
+  }
+  $('saveBtn').addEventListener('click', function () { saveSettings(false, this); });
+  $('saveCalBtn').addEventListener('click', function () { saveSettings(true, this); });
+
+  $('pwForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    if (val('pwNew') !== val('pwNew2')) return toast('Ulangan password baru tidak sama.', 'err');
+    var b = $('pwBtn');
+    btnBusy(b, true);
+    adm('adminChangePassword', $('pwOld').value, $('pwNew').value).then(function (res) {
+      if (!res.ok) throw new Error(res.message);
+      toast(res.message); $('pwForm').reset(); store('kultumPwWarn', null); $('pwWarn').hidden = true;
+    }).catch(function (e) { toast(e.message || e, 'err'); }).then(function () { btnBusy(b, false); });
+  });
+
+  document.querySelectorAll('[data-copy]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var inp = $(b.dataset.copy);
+      inp.select(); inp.setSelectionRange(0, 99999);
+      var ok = false;
+      try { ok = document.execCommand('copy'); } catch (e) { ok = false; }
+      if (!ok && navigator.clipboard) navigator.clipboard.writeText(inp.value).then(function () { toast('Tautan disalin.'); }, function () { toast('Salin manual: tekan lama pada tautan.', 'warn'); });
+      else toast(ok ? 'Tautan disalin.' : 'Salin manual: tekan lama pada tautan.', ok ? '' : 'warn');
+    });
+  });
+
+  // ===================== START =====================
+  var saved = store('kultumAdm');
+  if (saved) { A.token = saved; enterApp(); }
+})();
+</script>
+</body>
+</html>

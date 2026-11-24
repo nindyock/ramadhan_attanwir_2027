@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <base target="_top">
+  <meta charset="utf-8">
+  <meta name="theme-color" content="#0B3D2E">
+  <?!= include('Styles'); ?>
+</head>
+<body>
+
+  <!-- ================= HERO ================= -->
+  <header class="hero">
+    <svg class="crescent" viewBox="0 0 64 64" aria-hidden="true">
+      <defs>
+        <linearGradient id="gGold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#F6E3A8" />
+          <stop offset="1" stop-color="#C9A24A" />
+        </linearGradient>
+      </defs>
+      <path d="M38 6a26 26 0 1 0 20 42A22 22 0 1 1 38 6z" fill="url(#gGold)" />
+      <path d="M46 17l1.9 4.4 4.8.4-3.6 3.2 1.1 4.7L46 27.2l-4.2 2.5 1.1-4.7-3.6-3.2 4.8-.4z" fill="#F6E3A8" />
+    </svg>
+    <p class="bismillah" lang="ar" dir="rtl">بِسْمِ اللّٰهِ الرَّحْمٰنِ الرَّحِيْمِ</p>
+    <div class="eyebrow" id="namaMasjid"><?= namaMasjid ?></div>
+    <h1>Pendaftaran Pemateri Kultum<span class="gold">Ramadan 1448 H / 2027</span></h1>
+    <div class="ornament" aria-hidden="true"><span></span><i></i><span></span></div>
+    <div class="hero-stats" id="heroStats">
+      <span class="chip"><span class="dot"></span>Memuat jadwal…</span>
+    </div>
+  </header>
+
+  <!-- ================= FORM ================= -->
+  <main class="container" id="formView">
+    <div class="notice closed" id="closedBanner" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      <div><b>Pendaftaran sedang ditutup.</b><br>Silakan hubungi panitia untuk informasi lebih lanjut.</div>
+    </div>
+    <div class="notice" id="announce" hidden>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      <div id="announceText"></div>
+    </div>
+
+    <form class="card" id="regForm" novalidate autocomplete="on">
+      <!-- 1. Data pemateri -->
+      <section class="section">
+        <div class="section-head">
+          <div class="step">1</div>
+          <div><h2>Data Pemateri</h2><p>Isi nama dan nomor WhatsApp yang aktif.</p></div>
+        </div>
+        <div class="field">
+          <label class="label" for="nama">Nama Lengkap Ustadz <span class="req">*</span></label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input class="input" id="nama" name="nama" type="text" maxlength="100" placeholder="Contoh: Ust. Ahmad Fauzi, Lc." autocomplete="name" required>
+          </div>
+          <div class="err-text" id="namaErr" hidden></div>
+        </div>
+        <div class="field">
+          <label class="label" for="wa">Nomor WhatsApp <span class="req">*</span></label>
+          <div class="input-wrap">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <input class="input" id="wa" name="wa" type="tel" inputmode="tel" maxlength="20" placeholder="08xxxxxxxxxx" autocomplete="tel" required>
+          </div>
+          <div class="hint">Dipakai panitia untuk konfirmasi dan pengingat jadwal.</div>
+          <div class="err-text" id="waErr" hidden></div>
+        </div>
+        <!-- honeypot anti-bot: biarkan kosong -->
+        <input type="text" name="website" id="website" tabindex="-1" autocomplete="off" class="sr-only" aria-hidden="true">
+      </section>
+
+      <!-- 2. Jenis kultum -->
+      <section class="section">
+        <div class="section-head">
+          <div class="step">2</div>
+          <div><h2>Jenis Kultum</h2><p>Boleh pilih salah satu atau keduanya.</p></div>
+        </div>
+        <div class="jenis-grid" role="group" aria-label="Jenis kultum">
+          <label class="jenis" data-jenis="SUBUH">
+            <input type="checkbox" name="jenis" value="SUBUH">
+            <span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="4.22" y1="10.22" x2="5.64" y2="11.64"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="18.36" y1="11.64" x2="19.78" y2="10.22"/><line x1="23" y1="22" x2="1" y2="22"/><polyline points="8 6 12 2 16 6"/></svg></span>
+            <span class="t">Kultum Subuh</span>
+            <span class="s" id="jamSubuh">Ba'da shalat Subuh</span>
+            <span class="c" id="cntSubuh">… tersedia</span>
+          </label>
+          <label class="jenis" data-jenis="TARAWIH">
+            <input type="checkbox" name="jenis" value="TARAWIH">
+            <span class="check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4"><polyline points="20 6 9 17 4 12"/></svg></span>
+            <span class="ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg></span>
+            <span class="t">Kultum Tarawih</span>
+            <span class="s" id="jamTarawih">Malam hari</span>
+            <span class="c" id="cntTarawih">… tersedia</span>
+          </label>
+        </div>
+      </section>
+
+      <!-- 3. Tanggal -->
+      <section class="section" id="dateSection">
+        <div class="section-head">
+          <div class="step">3</div>
+          <div><h2>Pilih Tanggal</h2><p>Ketuk tanggal yang masih kosong untuk memilih, boleh lebih dari satu. Tanggal abu-abu sudah terisi.</p></div>
+        </div>
+        <div id="slotAlert"></div>
+        <div class="slot-toolbar">
+          <span id="slotInfo">Pilih jenis kultum terlebih dahulu.</span>
+          <button type="button" class="link-btn" id="refreshBtn" title="Perbarui daftar tanggal">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Perbarui
+          </button>
+        </div>
+        <div id="slotArea">
+          <div class="empty"><b>Belum ada jenis kultum dipilih</b>Centang Kultum Subuh dan/atau Kultum Tarawih di atas untuk melihat tanggal yang tersedia.</div>
+        </div>
+      </section>
+    </form>
+
+    <p class="foot">Panitia Ramadan 1448 H · <span id="footMasjid"><?= namaMasjid ?></span><br>
+      <a href="<?= baseUrl ?>?page=admin" target="_top">Masuk Administrator</a></p>
+  </main>
+
+  <!-- ================= SUKSES ================= -->
+  <main class="container" id="successView" hidden>
+    <div class="card success">
+      <div class="seal"><svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <p class="arab" lang="ar" dir="rtl">جَزَاكُمُ اللّٰهُ خَيْرًا</p>
+      <h2>Pendaftaran Berhasil</h2>
+      <p class="lead" id="okLead"></p>
+      <div class="ticket">
+        <div class="ticket-head"><span>Jadwal Terdaftar</span><b id="okCount" style="font-family:var(--font);letter-spacing:0">-</b></div>
+        <div id="okList"></div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-gold" type="button" id="icsBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="icsLabel">Simpan ke Kalender HP</span>
+        </button>
+        <a class="btn btn-ghost" id="okWa" href="#" target="_blank" rel="noopener" hidden>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.5A8.4 8.4 0 1 1 21 11.5z"/></svg>
+          Konfirmasi ke Panitia
+        </a>
+        <button class="btn btn-primary full" type="button" id="againBtn">Daftar Jadwal Lain</button>
+      </div>
+      <p class="hint" style="margin-top:16px">Ikon kalender di setiap baris menambahkan jadwal itu ke Google Calendar. Untuk perubahan atau pembatalan, silakan hubungi panitia dengan menyebutkan ID jadwal.</p>
+    </div>
+  </main>
+
+  <!-- ================= BAR SUBMIT ================= -->
+  <div class="submit-bar" id="submitBar">
+    <div class="submit-inner">
+      <div class="pick-summary" id="pickSummary"><b>Belum memilih tanggal</b>Lengkapi langkah 1–3</div>
+      <button class="btn btn-primary" type="submit" form="regForm" id="submitBtn">
+        <span>Daftar Sekarang</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toasts" aria-live="polite"></div>
+
+<script>
+(function () {
+  'use strict';
+
+  var JENIS = ['SUBUH', 'TARAWIH'];
+  var S = { data: null, on: { SUBUH: false, TARAWIH: false }, pick: {}, busy: false, loading: false, lastLoad: 0, result: null };
+  var ASHRA = {
+    1: { t: '10 Hari Pertama', a: 'رَحْمَة' },
+    2: { t: '10 Hari Kedua', a: 'مَغْفِرَة' },
+    3: { t: '10 Hari Terakhir', a: 'عِتْقٌ مِنَ النَّار' }
+  };
+  var LABEL = { SUBUH: 'Kultum Subuh', TARAWIH: 'Kultum Tarawih' };
+  var SHORT = { SUBUH: 'Subuh', TARAWIH: 'Tarawih' };
+  var ICON = {
+    SUBUH: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 18a5 5 0 0 0-10 0"/><line x1="12" y1="2" x2="12" y2="9"/><line x1="1" y1="18" x2="3" y2="18"/><line x1="21" y1="18" x2="23" y2="18"/><line x1="23" y1="22" x2="1" y2="22"/></svg>',
+    TARAWIH: '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>'
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function pad(n) { return ('0' + n).slice(-2); }
+
+  function api(fn) {
+    var args = Array.prototype.slice.call(arguments, 1);
+    if (window.google && google.script && google.script.run) {
+      return new Promise(function (resolve, reject) {
+        var r = google.script.run.withSuccessHandler(resolve).withFailureHandler(reject);
+        r[fn].apply(r, args);
+      });
+    }
+    // Mode mandiri (GitHub Pages, dsb.): panggil API JSON Apps Script TANPA cookie,
+    // sehingga tidak terpengaruh akun Google yang sedang login di browser.
+    return fetch(window.KULTUM_API, {
+      method: 'POST', redirect: 'follow', credentials: 'omit', cache: 'no-store',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify({ fn: fn, args: args })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('Server tidak merespons (HTTP ' + r.status + ').');
+      return r.json();
+    }, function () {
+      throw new Error('Tidak dapat terhubung ke server. Periksa koneksi internet lalu coba lagi.');
+    });
+  }
+
+  function toast(msg, type, ms) {
+    var el = document.createElement('div');
+    el.className = 'toast ' + (type || '');
+    el.textContent = msg;
+    var box = $('toasts');
+    while (box.children.length >= 2) box.removeChild(box.firstChild);
+    box.appendChild(el);
+    setTimeout(function () { el.style.transition = 'opacity .3s'; el.style.opacity = '0'; setTimeout(function () { el.remove(); }, 300); }, ms || 4200);
+  }
+
+  // ---------- pilihan ----------
+  function key(j, k) { return j + ':' + k; }
+  function picksOf(j) {
+    return Object.keys(S.pick).filter(function (x) { return x.indexOf(j + ':') === 0; })
+      .map(function (x) { return Number(x.split(':')[1]); }).sort(function (a, b) { return a - b; });
+  }
+  function pickList() {
+    var out = [];
+    JENIS.forEach(function (j) { picksOf(j).forEach(function (k) { out.push({ jenis: j, hariKe: k }); }); });
+    return out;
+  }
+  function findSlot(j, k) {
+    var list = (S.data && S.data.slots[j]) || [];
+    for (var i = 0; i < list.length; i++) if (list[i].hariKe === k) return list[i];
+    return null;
+  }
+  function isFree(s) { return s && s.status === 'TERSEDIA'; }
+  function freeCount(j) { return ((S.data && S.data.slots[j]) || []).filter(isFree).length; }
+  /** Buang pilihan yang sudah tidak tersedia. Mengembalikan label yang dibuang. */
+  function prunePicks() {
+    var gone = [];
+    Object.keys(S.pick).forEach(function (x) {
+      var p = x.split(':'), s = findSlot(p[0], Number(p[1]));
+      if (!isFree(s)) { gone.push(LABEL[p[0]] + ' ke-' + p[1]); delete S.pick[x]; }
+    });
+    return gone;
+  }
+
+  // ---------- muat data ----------
+  function load(silent) {
+    if (S.loading) return Promise.resolve();
+    S.loading = true;
+    if (!silent) skeleton();
+    $('refreshBtn').disabled = true;
+    return api('getPublicData').then(function (res) {
+      if (!res || !res.ok) throw new Error(res && res.message || 'Gagal memuat data');
+      S.data = res; S.lastLoad = Date.now();
+      var gone = prunePicks();
+      renderAll();
+      if (gone.length) {
+        showSlotAlert('Tanggal berikut baru saja diambil pendaftar lain dan sudah dihapus dari pilihan Anda: ' + gone.join(', ') + '.');
+        toast('Sebagian tanggal pilihan Anda sudah diambil pendaftar lain.', 'warn');
+      }
+    }).catch(function (e) {
+      if (!silent) $('slotArea').innerHTML = '<div class="empty"><b>Gagal memuat jadwal</b>' + esc(e.message || e) + '<br><br><button type="button" class="btn btn-ghost btn-sm" onclick="location.reload()">Muat ulang</button></div>';
+    }).then(function () { S.loading = false; $('refreshBtn').disabled = false; });
+  }
+
+  function skeleton() {
+    if (!S.on.SUBUH && !S.on.TARAWIH) return;
+    var h = '<div class="slot-grid">';
+    for (var i = 0; i < 10; i++) h += '<div class="sk sk-slot"></div>';
+    $('slotArea').innerHTML = h + '</div>';
+  }
+
+  // ---------- render ----------
+  function renderAll() {
+    var d = S.data, st = d.settings;
+    if (st.namaMasjid) { $('namaMasjid').textContent = st.namaMasjid; $('footMasjid').textContent = st.namaMasjid; }
+    $('closedBanner').hidden = st.status === 'BUKA';
+    $('submitBtn').disabled = st.status !== 'BUKA';
+    if (st.pengumuman) { $('announce').hidden = false; $('announceText').textContent = st.pengumuman; } else { $('announce').hidden = true; }
+    $('jamSubuh').textContent = "Ba'da Subuh · ±" + st.jamSubuh;
+    $('jamTarawih').textContent = 'Malam hari · ±' + st.jamTarawih;
+    var cs = d.counts.SUBUH, ct = d.counts.TARAWIH;
+    $('cntSubuh').textContent = cs.tersedia + ' tanggal tersedia';
+    $('cntTarawih').textContent = ct.tersedia + ' tanggal tersedia';
+    $('heroStats').innerHTML =
+      '<span class="chip"><span class="dot"></span><span>Subuh <b>' + cs.tersedia + '</b>/' + cs.total + ' tersedia</span></span>' +
+      '<span class="chip"><span class="dot"></span><span>Tarawih <b>' + ct.tersedia + '</b>/' + ct.total + ' tersedia</span></span>';
+    renderSlots();
+    renderSummary();
+  }
+
+  function renderSlots() {
+    var area = $('slotArea');
+    var active = JENIS.filter(function (j) { return S.on[j]; });
+    if (!active.length) {
+      $('slotInfo').textContent = 'Pilih jenis kultum terlebih dahulu.';
+      area.innerHTML = '<div class="empty"><b>Belum ada jenis kultum dipilih</b>Centang Kultum Subuh dan/atau Kultum Tarawih di atas untuk melihat tanggal yang tersedia.</div>';
+      return;
+    }
+    if (!S.data) return skeleton();
+    var t = new Date(S.lastLoad);
+    var total = pickList().length;
+    $('slotInfo').innerHTML = (total ? '<b style="color:var(--g-900)">' + total + '</b> dipilih · ' : '') + 'diperbarui ' + pad(t.getHours()) + ':' + pad(t.getMinutes());
+
+    var legend = '<div class="legend"><span><i></i>Tersedia</span><span><i class="on"></i>Pilihan Anda</span><span><i class="taken"></i>Sudah terisi</span></div>';
+    area.innerHTML = legend + active.map(function (j) {
+      var list = S.data.slots[j] || [], n = picksOf(j).length, free = freeCount(j);
+      var head = '<div class="block-head"><div class="bi">' + ICON[j] + '</div><div class="bt"><b>' + LABEL[j] + '</b><span>' + free + '/' + list.length + ' tersedia</span></div>' +
+        (n ? '<button type="button" class="clear-btn" data-clear="' + j + '">Hapus</button>' : '') +
+        '<span class="pick-badge' + (n ? '' : ' zero') + '">' + n + ' dipilih</span></div>';
+      var note = (!free && list.length) ? '<div class="alert ok" style="margin-bottom:12px"><div><b>Alhamdulillah, semua tanggal ' + LABEL[j] + ' sudah terisi.</b> Silakan pilih jenis kultum lainnya atau hubungi panitia.</div></div>' : '';
+      var groups = { 1: [], 2: [], 3: [] };
+      list.forEach(function (s) { groups[s.ashra].push(s); });
+      var h = '';
+      [1, 2, 3].forEach(function (g) {
+        if (!groups[g].length) return;
+        h += '<div class="ashra"><div class="ashra-title">' + ASHRA[g].t + ' <em lang="ar">' + ASHRA[g].a + '</em></div><div class="slot-grid">';
+        groups[g].forEach(function (s) {
+          var head2 = '<span class="k">' + (j === 'SUBUH' ? 'Ramadan ' : 'Malam ') + s.hariKe + '</span><span class="d">' + s.tgl + '</span><span class="m">' + esc(s.bln) + '</span>';
+          if (s.status === 'TERSEDIA') {
+            var on = S.pick[key(j, s.hariKe)] ? ' on' : '';
+            h += '<button type="button" class="slot' + on + '" data-j="' + j + '" data-k="' + s.hariKe + '" aria-pressed="' + (on ? 'true' : 'false') + '" aria-label="' + esc(LABEL[j] + ', ' + s.urutan + ', ' + s.tanggal) + '">' +
+              head2 + '<span class="w">' + esc(s.hari) + '</span></button>';
+          } else {
+            var cls = s.status === 'TERISI' ? 'taken' : (s.status === 'DITUTUP' ? 'closed' : 'past');
+            var chip = s.status === 'TERISI' ? esc(s.pengisi || '•') : (s.status === 'DITUTUP' ? 'Panitia' : 'Lewat');
+            var why = s.status === 'TERISI' ? 'sudah diisi ' + (s.pengisi || '') : (s.status === 'DITUTUP' ? 'dikhususkan panitia' : 'sudah lewat');
+            h += '<button type="button" class="slot ' + cls + '" disabled aria-disabled="true" title="' + esc(s.tanggal + ' — ' + why) + '" aria-label="' + esc(LABEL[j] + ', ' + s.urutan + ', ' + s.tanggal + ', ' + why) + '">' +
+              head2 + '<span class="ini">' + chip + '</span></button>';
+          }
+        });
+        h += '</div></div>';
+      });
+      return '<div class="jenis-block">' + head + note + h + '</div>';
+    }).join('');
+  }
+
+  function renderSummary() {
+    var el = $('pickSummary');
+    var ps = picksOf('SUBUH'), pt = picksOf('TARAWIH'), n = ps.length + pt.length;
+    if (n) {
+      var parts = [];
+      if (ps.length) parts.push('Subuh ke-' + ps.join(', '));
+      if (pt.length) parts.push('Malam ke-' + pt.join(', '));
+      el.innerHTML = '<b>' + n + ' jadwal dipilih</b>' + esc(parts.join(' · '));
+    } else if (S.on.SUBUH || S.on.TARAWIH) {
+      el.innerHTML = '<b>Belum memilih tanggal</b>Ketuk tanggal pada langkah 3';
+    } else {
+      el.innerHTML = '<b>Belum memilih tanggal</b>Lengkapi langkah 1–3';
+    }
+  }
+
+  function showSlotAlert(msg) {
+    $('slotAlert').innerHTML = msg ? '<div class="alert"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><div>' + esc(msg) + '</div></div>' : '';
+  }
+
+  // ---------- interaksi ----------
+  document.querySelectorAll('.jenis').forEach(function (lab) {
+    lab.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      var j = lab.getAttribute('data-jenis');
+      S.on[j] = !S.on[j];
+      lab.querySelector('input').checked = S.on[j];
+      lab.classList.toggle('on', S.on[j]);
+      if (!S.on[j]) picksOf(j).forEach(function (k) { delete S.pick[key(j, k)]; });
+      showSlotAlert('');
+      renderSlots(); renderSummary();
+      if (S.on[j] && Date.now() - S.lastLoad > 20000) load(true);
+    });
+  });
+
+  $('slotArea').addEventListener('click', function (ev) {
+    var c = ev.target.closest('[data-clear]');
+    if (c) {
+      var jj = c.getAttribute('data-clear');
+      picksOf(jj).forEach(function (k) { delete S.pick[key(jj, k)]; });
+      renderSlots(); renderSummary();
+      return;
+    }
+    var b = ev.target.closest('.slot');
+    if (!b || b.disabled || !b.getAttribute('data-j')) return;
+    var k = key(b.getAttribute('data-j'), b.getAttribute('data-k'));
+    if (S.pick[k]) delete S.pick[k]; else S.pick[k] = true;
+    showSlotAlert('');
+    renderSlots(); renderSummary();
+  });
+
+  $('refreshBtn').addEventListener('click', function () { load(false); });
+
+  function fieldErr(id, msg) {
+    $(id + 'Err').hidden = !msg; $(id + 'Err').textContent = msg || '';
+    $(id).classList.toggle('invalid', !!msg);
+  }
+  function normWa(v) {
+    var d = String(v || '').replace(/\D/g, '');
+    if (d.indexOf('0') === 0) d = '62' + d.slice(1); else if (d.indexOf('8') === 0) d = '62' + d;
+    return d.length >= 10 && d.length <= 15 ? d : '';
+  }
+  $('nama').addEventListener('input', function () { fieldErr('nama', ''); });
+  $('wa').addEventListener('input', function () { fieldErr('wa', ''); });
+
+  $('regForm').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    if (S.busy) return;
+    var nama = $('nama').value.trim(), wa = $('wa').value.trim(), bad = false;
+    if (nama.length < 3) { fieldErr('nama', 'Nama lengkap wajib diisi (minimal 3 huruf).'); bad = true; }
+    if (!normWa(wa)) { fieldErr('wa', 'Nomor WhatsApp tidak valid. Contoh: 081234567890'); bad = true; }
+    if (bad) { $('nama').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    if (!S.on.SUBUH && !S.on.TARAWIH) { toast('Silakan centang jenis kultum.', 'warn'); document.querySelector('.jenis-grid').scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
+    var picks = pickList();
+    if (!picks.length) { toast('Silakan pilih minimal satu tanggal.', 'warn'); $('dateSection').scrollIntoView({ behavior: 'smooth', block: 'start' }); return; }
+
+    setBusy(true, picks.length);
+    api('submitRegistration', { nama: nama, wa: wa, pilihan: picks, website: $('website').value })
+      .then(function (res) {
+        if (res && res.ok) return showSuccess(res.data);
+        handleFail(res || {});
+      })
+      .catch(function (e) { toast('Koneksi bermasalah: ' + (e && e.message || e) + '. Silakan coba lagi.', 'err', 6000); })
+      .then(function () { setBusy(false); });
+  });
+
+  function handleFail(res) {
+    if (res.code === 'TAKEN') {
+      if (res.slots && S.data) {
+        JENIS.forEach(function (j) {
+          if (res.slots[j]) { S.data.slots[j] = res.slots[j]; S.data.counts[j].tersedia = freeCount(j); }
+        });
+      }
+      (res.taken || []).forEach(function (t) { delete S.pick[key(t.jenis, t.hariKe)]; });
+      prunePicks();
+      renderAll();
+      showSlotAlert(res.message);
+      toast('Ada tanggal yang sudah diambil pendaftar lain. Periksa pilihan Anda lalu tekan Daftar lagi.', 'err', 6000);
+      $('dateSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+    if (res.code === 'CLOSED') { if (S.data) S.data.settings.status = 'TUTUP'; renderAll(); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    toast(res.message || 'Pendaftaran gagal. Silakan coba lagi.', res.code === 'BUSY' ? 'warn' : 'err', 7000);
+  }
+
+  function setBusy(on, n) {
+    S.busy = on;
+    var b = $('submitBtn');
+    b.disabled = on || (S.data && S.data.settings.status !== 'BUKA');
+    b.innerHTML = on ? '<span class="spinner"></span><span>Mengunci ' + (n > 1 ? n + ' jadwal' : 'jadwal') + '…</span>'
+      : '<span>Daftar Sekarang</span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+  }
+
+  // ---------- kalender ----------
+  function endOf(jam) {
+    var hm = String(jam).split(':'), h = Number(hm[0]), m = Number(hm[1]);
+    var e = h * 60 + m + (Number(S.data.settings.durasi) || 10);
+    return { h: h, m: m, eh: Math.floor(e / 60) % 24, em: e % 60 };
+  }
+  function eventTitle(it) {
+    var st = S.data.settings;
+    return it.jenisLabel + ' Ramadan 1448 H – ' + it.urutan + (st.namaMasjid ? ' (' + st.namaMasjid + ')' : '');
+  }
+  function gcalLink(it, nama) {
+    var st = S.data.settings, t = endOf(it.jam), ymd = it.iso.replace(/-/g, '');
+    var dates = ymd + 'T' + pad(t.h) + pad(t.m) + '00/' + ymd + 'T' + pad(t.eh) + pad(t.em) + '00';
+    var details = 'Jadwal mengisi ' + it.jenisLabel + '\nPemateri: ' + nama + '\nID: ' + it.id;
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE&text=' + encodeURIComponent(eventTitle(it)) +
+      '&dates=' + dates + '&ctz=' + encodeURIComponent(S.data.timezone || 'Asia/Jakarta') +
+      '&details=' + encodeURIComponent(details) + (st.lokasi ? '&location=' + encodeURIComponent(st.lokasi) : '');
+  }
+  /** Waktu lokal → UTC (format iCalendar) memakai offset zona waktu dari server, mis. +0700. */
+  function icsUtc(iso, h, m) {
+    var off = /^[+-]\d{4}$/.test(String(S.data.tzOffset)) ? String(S.data.tzOffset) : '+0700', sign = off.charAt(0) === '-' ? -1 : 1;
+    var offMin = sign * (Number(off.slice(1, 3)) * 60 + Number(off.slice(3, 5)));
+    var p = iso.split('-');
+    var d = new Date(Date.UTC(Number(p[0]), Number(p[1]) - 1, Number(p[2]), h, m) - offMin * 60000);
+    return d.getUTCFullYear() + pad(d.getUTCMonth() + 1) + pad(d.getUTCDate()) + 'T' + pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + '00Z';
+  }
+  function icsText(s) { return String(s).replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\n/g, '\\n'); }
+  function buildIcs(res) {
+    var st = S.data.settings, now = new Date();
+    var stamp = now.getUTCFullYear() + pad(now.getUTCMonth() + 1) + pad(now.getUTCDate()) + 'T' + pad(now.getUTCHours()) + pad(now.getUTCMinutes()) + '00Z';
+    var L = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Kultum Ramadan 1448H//ID', 'CALSCALE:GREGORIAN', 'METHOD:PUBLISH'];
+    res.items.forEach(function (it) {
+      var t = endOf(it.jam);
+      L.push('BEGIN:VEVENT', 'UID:' + it.id + '@kultum-ramadan-1448', 'DTSTAMP:' + stamp,
+        'DTSTART:' + icsUtc(it.iso, t.h, t.m), 'DTEND:' + icsUtc(it.iso, t.eh, t.em),
+        'SUMMARY:' + icsText(eventTitle(it)),
+        'DESCRIPTION:' + icsText('Jadwal mengisi ' + it.jenisLabel + '\nPemateri: ' + res.nama + '\nID: ' + it.id));
+      if (st.lokasi) L.push('LOCATION:' + icsText(st.lokasi));
+      L.push('BEGIN:VALARM', 'TRIGGER:-PT1H', 'ACTION:DISPLAY', 'DESCRIPTION:' + icsText(eventTitle(it)), 'END:VALARM', 'END:VEVENT');
+    });
+    L.push('END:VCALENDAR');
+    return L.join('\r\n');
+  }
+
+  // ---------- sukses ----------
+  function showSuccess(res) {
+    var st = S.data.settings, items = res.items || [];
+    S.result = res;
+    $('toasts').innerHTML = '';
+    $('okLead').textContent = 'Terima kasih, ' + String(res.nama).replace(/\.+$/, '') + '. ' +
+      (items.length > 1 ? 'Semua jadwal di bawah ini' : 'Jadwal di bawah ini') + ' sudah tercatat dan dikunci untuk Anda.';
+    $('okCount').textContent = items.length + ' jadwal';
+    var tz = S.data.timezone === 'Asia/Jakarta' ? ' WIB' : '';
+    $('okList').innerHTML = items.map(function (it) {
+      var sub = it.jenis === 'SUBUH';
+      return '<div class="sched"><div class="sb ' + (sub ? '' : 'tarawih') + '"><div><small>' + (sub ? 'SUBUH' : 'MALAM') + '</small>' + it.hariKe + '</div></div>' +
+        '<div class="si"><b>' + esc(it.jenisLabel) + ' · ' + (sub ? 'Hari ke-' : 'Malam ke-') + it.hariKe + '</b>' +
+        '<span>' + esc(it.tanggal) + ' · ±' + esc(it.jam) + tz + '</span><em>ID ' + esc(it.id) + '</em></div>' +
+        '<a class="cal-btn" href="' + esc(gcalLink(it, res.nama)) + '" target="_blank" rel="noopener" title="Tambah ke Google Calendar" aria-label="Tambah ke Google Calendar">' +
+        '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="18"/><line x1="10" y1="16" x2="14" y2="16"/></svg></a></div>';
+    }).join('');
+    $('icsLabel').textContent = items.length > 1 ? 'Simpan Semua ke Kalender HP' : 'Simpan ke Kalender HP';
+
+    if (st.waPanitia) {
+      var msg = "Assalamu'alaikum panitia, saya " + res.nama + ' telah mendaftar sebagai pemateri kultum Ramadan 1448 H:\n' +
+        items.map(function (it, i) { return (i + 1) + '. ' + it.jenisLabel + ' ' + it.urutan + ' – ' + it.tanggal + ' (ID ' + it.id + ')'; }).join('\n') +
+        '\nJazakumullah khairan.';
+      $('okWa').href = 'https://wa.me/' + st.waPanitia + '?text=' + encodeURIComponent(msg);
+      $('okWa').hidden = false;
+    } else { $('okWa').hidden = true; }
+
+    // hapus slot yang baru dipesan dari daftar lokal
+    items.forEach(function (it) {
+      var sl = findSlot(it.jenis, it.hariKe);
+      if (sl) { sl.status = 'TERISI'; sl.pengisi = it.pengisi; }
+      S.data.counts[it.jenis].tersedia = freeCount(it.jenis);
+    });
+    S.pick = {};
+    renderAll();
+
+    $('formView').hidden = true; $('submitBar').hidden = true; $('successView').hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  $('icsBtn').addEventListener('click', function () {
+    if (!S.result) return;
+    try {
+      var blob = new Blob([buildIcs(S.result)], { type: 'text/calendar;charset=utf-8' });
+      var url = URL.createObjectURL(blob), a = document.createElement('a');
+      a.href = url; a.download = 'Jadwal-Kultum-Ramadan-1448H.ics';
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(url); }, 60000);
+      toast('File kalender diunduh. Buka file tersebut untuk menambahkan ke kalender HP.');
+    } catch (e) { toast('Gagal membuat file kalender. Gunakan ikon kalender di setiap baris.', 'err'); }
+  });
+
+  $('againBtn').addEventListener('click', function () {
+    S.on = { SUBUH: false, TARAWIH: false }; S.pick = {}; S.result = null;
+    document.querySelectorAll('.jenis').forEach(function (x) { x.classList.remove('on'); x.querySelector('input').checked = false; });
+    showSlotAlert('');
+    $('successView').hidden = true; $('formView').hidden = false; $('submitBar').hidden = false;
+    renderAll();
+    load(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // perbarui otomatis agar tanggal yang diambil orang lain cepat hilang
+  setInterval(function () {
+    if (document.hidden || S.busy || !$('successView').hidden) return;
+    load(true);
+  }, 30000);
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden && Date.now() - S.lastLoad > 15000) load(true);
+  });
+
+  load(false);
+})();
+</script>
+</body>
+</html>
